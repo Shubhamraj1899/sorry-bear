@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Please Forgive Me</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ff4c6a, #f46e8c);
+      text-align: center;
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+    }
+    h1 {
+      color: #ffcc00;
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    p {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+    }
+    .button-container {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+    #yes-button {
+      background-color: #4CAF50;
+    }
+    #no-button {
+      background-color: #f44336;
+      position: absolute;
+      transition: left 0.3s ease, top 0.3s ease;
+    }
+    button:hover {
+      opacity: 0.8;
+    }
+    .message {
+      margin-top: 50px;
+      font-size: 2rem;
+      position: relative;
+    }
+    .thank-you-message {
+      color: #ffcc00; /* Golden yellow */
+    }
+    .forgive-message {
+      color: #ffffff; /* Soft white */
+    }
+    .heart {
+      position: absolute;
+      bottom: 0;
+      font-size: 2rem;
+      animation: moveUp 4s ease-in-out forwards;
+    }
+    .i-love-you {
+      font-size: 3rem;
+      color: #e60000;
+      opacity: 1;
+      position: relative;
+      animation: iLoveYouAnimation 1s ease-in-out forwards, glowing 1.5s ease-in-out infinite alternate;
+      display: inline-block;
+    }
+    @keyframes moveUp {
+      0% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-300px);
+        opacity: 0;
+      }
+    }
+    @keyframes iLoveYouAnimation {
+      0% {
+        transform: perspective(500px) translateZ(-200px);
+        opacity: 0;
+      }
+      100% {
+        transform: perspective(500px) translateZ(0);
+        opacity: 1;
+      }
+    }
+    @keyframes glowing {
+      0% {
+        text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00, 0 0 15px #ffcc00, 0 0 20px #ffcc00;
+      }
+      100% {
+        text-shadow: 0 0 10px #ffcc00, 0 0 15px #ffcc00, 0 0 20px #ffcc00, 0 0 25px #ffcc00;
+      }
+    }
+    #request-button {
+      background-color: #ff9800;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      transition: all 0.3s ease;
+    }
+    .arrow {
+      position: absolute;
+      top: 60px;
+      right: 150px;
+      font-size: 2rem;
+      color: #ffffff;
+      display: none;
+      animation: bounce 1.5s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Please forgive me for my mistake, Shukku</h1>
+  <p id="initial-message">
+    I know you love me, but I want to hear it from you. 💖<br> Do you love me?
+  </p>
+
+  <div class="button-container" id="buttons">
+    <button id="yes-button">Yes</button>
+    <button id="no-button">No</button>
+  </div>
+
+  <div class="message" id="message"></div>
+  <button id="request-button">Request</button>
+  <div class="arrow" id="arrow">⬇️</div>
+
+  <script>
+    const yesButton = document.getElementById('yes-button');
+    const noButton = document.getElementById('no-button');
+    const requestButton = document.getElementById('request-button');
+    const arrow = document.getElementById('arrow');
+    const messageDiv = document.getElementById('message');
+    const initialMessage = document.getElementById('initial-message');
+    const buttonsDiv = document.getElementById('buttons');
+
+    const noMessages = [
+      "huh, aisa nhii krte na 🤨",
+      "I’m waiting for your love babe 😘",
+      "bhut pitunga 😡",
+      "ab to maan jaiye ma'am 🙏",
+      "nkhrili ho kya 🤔",
+      "Shubham loves Shubham na ❤️",
+      "maan jao na, lifetime Snapchat subscription free me dilwa dunga 👻",
+      "I'll do anything for you 💘",
+      "You're breaking my heart 😢",
+      "I promise I won't hurt you again 😔",
+      "I just want you to be happy ❤️",
+      "Do you want a lifetime of happiness with me? 😊"
+    ];
+
+    let messageIndex = 0;
+
+    function createHeartOrRose() {
+      const symbols = ['❤️', '🌹'];
+      const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+
+      const element = document.createElement('div');
+      element.classList.add('heart');
+      element.textContent = symbol;
+      document.body.appendChild(element);
+
+      const randomX = Math.random() * window.innerWidth;
+      element.style.left = `${randomX}px`;
+
+      setTimeout(() => {
+        element.remove();
+      }, 4000);
+    }
+
+    function typeMessage(element, message, delay = 100) {
+      let i = 0;
+      const interval = setInterval(() => {
+        if (i < message.length) {
+          element.textContent += message[i];
+          i++;
+        } else {
+          clearInterval(interval);
+        }
+      }, delay);
+    }
+
+    yesButton.addEventListener('click', () => {
+      buttonsDiv.style.display = 'none';
+      initialMessage.style.display = 'none';
+      messageDiv.innerHTML = "I already knew that😊.I love you even more❤️, and I promise I will never repeat my last mistake.";
+
+      setTimeout(() => {
+        requestButton.style.display = 'inline-block';
+
+        // Show arrow after 3 seconds
+        setTimeout(() => {
+          arrow.style.display = 'block';
+        }, 3000);
+
+        setInterval(createHeartOrRose, 500);
+      }, 2000);
+    });
+
+    noButton.addEventListener('mouseover', () => {
+      const randomX = Math.floor(Math.random() * (window.innerWidth - noButton.offsetWidth));
+      const randomY = Math.floor(Math.random() * (window.innerHeight - noButton.offsetHeight));
+      noButton.style.left = `${randomX}px`;
+      noButton.style.top = `${randomY}px`;
+
+      messageDiv.innerHTML = noMessages[messageIndex];
+      messageIndex = (messageIndex + 1) % noMessages.length;
+    });
+
+    requestButton.addEventListener('click', () => {
+      requestButton.style.display = 'none';
+      arrow.style.display = 'none';
+
+      // Step 1: Show forgiveness message
+      messageDiv.innerHTML = "I know I hurt you, and for the past 15 days, I've been missing you deeply.<br>Can you please give me one more chance to prove my love? 🙏";
+
+      // Step 2: After 5 seconds, show thank-you message one letter at a time
+      setTimeout(() => {
+        messageDiv.innerHTML = '';
+        typeMessage(messageDiv, "Thank you for being part of my life, babe.");
+
+        // Step 3: After 5 seconds, show the I love you animation
+        setTimeout(() => {
+          messageDiv.innerHTML = '<span class="i-love-you">I love you ❤️</span>';
+          setInterval(createHeartOrRose, 500);
+        }, 5000);
+      }, 7000);
+    });
+  </script>
+</body>
+</html>
